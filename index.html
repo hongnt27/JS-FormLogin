@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head> 
+<body>
+
+    <!-- Trigger/Open The Modal -->
+    <button id="myBtn">Đăng nhập hệ thống</button>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Member login</h2>
+        <div class="form">
+            <div class="input-container">
+              <div class="ip">
+                <i class="fa fa-user icon"></i>
+                <input id="username" class="input-field" type="text" placeholder="Username" name="username">
+              </div>
+              <p id="warn-u"></p>
+            </div>
+            <div class="input-container">
+              <div class="ip">
+                <i class="fa-solid fa-lock"></i>
+                <input id="password" class="input-field" type="text" placeholder="Password" name="password">
+              </div>
+              <p id="warn-p"></p>
+            </div>
+            <button id="btnLogin" class="btn" onclick="chon()">Login</button>
+            <p id="warn-l"></p>
+        </div>
+        <footer>
+          <a type="button" onclick="changePassword()">Forgot Password?</a>
+        </footer>
+    </div>
+    </div>
+        
+
+<script>
+  // Get the modal
+  var modal = document.getElementById("myModal");
+
+  // Get the button that opens the modal
+  var btn = document.getElementById("myBtn");
+
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // When the user clicks on the button, open the modal
+  // var pwuser = "admin";
+  btn.onclick = function() {
+    modal.style.display = "block";
+    document.getElementById("myBtn").innerText = "Đăng nhập hệ thống"
+    document.getElementById("username").placeholder = "Username"
+    document.getElementById("password").placeholder = "Password"
+    document.getElementById("btnLogin").innerText = "Login"
+    document.getElementById("warn-u").innerHTML = ""
+    document.getElementById("warn-p").innerHTML = ""
+    document.getElementById("warn-l").innerHTML = ""
+    document.getElementById("username").value = ""
+    document.getElementById("password").value = ""
+   
+  }
+// luu mat khau mac dinh vao storage
+var pwuser = "admin";
+var json = JSON.stringify(pwuser);
+localStorage.setItem(pwuser, json);
+console.log(JSON.parse(localStorage.getItem(pwuser) ));
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+  document.getElementById("warn-u").innerHTML = "";
+  document.getElementById("warn-p").innerHTML = "";
+  btnLogin.innerText = "Login";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+// function chon
+function chon() {
+  var btnLS = document.getElementById("btnLogin").textContent;
+  
+  // btn Login
+  if(btnLS == "Login"){
+      document.getElementById("warn-l").innerHTML = ""
+      var username = document.getElementById("username").value;
+      var password = document.getElementById("password").value;
+      // console.log(password,localStorage.getItem("admin")) ;
+      if (username == "") {
+        document.getElementById("warn-u").innerHTML = "Bắt buộc nhập"
+      }
+      else{
+        document.getElementById("warn-u").innerHTML = ""
+      }
+      if (password == "") {
+        document.getElementById("warn-p").innerHTML = "Bắt buộc nhập"
+      }
+      else if(password != ""){
+        document.getElementById("warn-p").innerHTML = ""
+      }
+      if(username!= '' && password != '' && (username != 'admin' || password != JSON.parse(localStorage.getItem("admin") ))){
+        document.getElementById("warn-p").innerHTML = "Tài khoản hoặc mật khẩu không đúng"
+      }
+      if(username == 'admin' && password == JSON.parse(localStorage.getItem("admin") ) ){
+        
+        document.getElementById('btnLogin').innerText="Loading...";
+        document.getElementById("warn-u").innerHTML = ""
+        document.getElementById("warn-p").innerHTML = ""
+        document.getElementById("warn-l").innerHTML = ""
+        // setTimeout
+        setTimeout(function() {
+          document.getElementById('btnLogin').innerText="Login";
+          modal.style.display = "none"; // đóng form
+          document.getElementById("myBtn").innerText = "Đăng nhập thành công"
+        }, 1000);
+      }
+  }
+  // btnSave
+  if(btnLS == "Save"){
+      // console.log(JSON.parse(localStorage.getItem("admin"))); 
+      var oldp = document.getElementById("username").value;
+      var newp = document.getElementById("password").value;
+      if (oldp == "") {
+        document.getElementById("warn-u").innerHTML = "Bắt buộc nhập"
+      }
+      else{
+        document.getElementById("warn-u").innerHTML = ""
+      }
+      if (newp == "") {
+        document.getElementById("warn-p").innerHTML = "Bắt buộc nhập"
+      }
+      if (newp != "") {
+        document.getElementById("warn-p").innerHTML = ""
+      }
+      if(oldp != "" && oldp != JSON.parse(localStorage.getItem("admin"))){
+        document.getElementById("warn-u").innerHTML = "Password không đúng"
+      }
+      if(oldp == newp && oldp == JSON.parse(localStorage.getItem("admin"))){
+        document.getElementById("warn-p").innerHTML = "Password mới trùng password cũ"
+      }
+      if(oldp == JSON.parse(localStorage.getItem("admin")) && newp != "" && newp != oldp ){
+        // luu mat khau moi
+        localStorage.removeItem("admin");
+        var json = JSON.stringify(newp);
+        localStorage.setItem("admin", json);
+        // chuyen ve trang login de dang nhap
+        document.getElementById("username").placeholder = "Username"
+        document.getElementById("password").placeholder = "Password"
+        document.getElementById("btnLogin").innerText = "Login"
+        document.getElementById("warn-u").innerHTML = ""
+        document.getElementById("warn-p").innerHTML = ""
+        document.getElementById("warn-l").innerHTML = "Bạn đã đổi mật khẩu thành công"
+        document.getElementById("username").value = ""
+        document.getElementById("password").value = ""
+      }
+    }
+}
+// khi click forgot password
+function changePassword() {
+  document.getElementById("username").value = ""
+  document.getElementById("password").value = ""
+  document.getElementById("username").placeholder = "OldPassword"
+  document.getElementById("password").placeholder = "NewPassword"
+  document.getElementById("btnLogin").innerText = "Save"
+  document.getElementById("warn-u").innerHTML = ""
+  document.getElementById("warn-p").innerHTML = ""
+}
+</script>
+</body>
+</html>
